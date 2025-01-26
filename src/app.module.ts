@@ -7,6 +7,10 @@ import { BankAccountModule } from './bank-account/bank-account.module';
 import { UserModule } from './user/user.module';
 import { BankAccount } from './bank-account/entities/bank-account.entity';
 import { AuthModule } from './auth/auth.module';
+import { Role } from './role/entities/role.entity';
+import { UserRole } from './user-role/entities/user-role.entity';
+import { RoleModule } from './role/role.module';
+import { UserRoleModule } from './user-role/user-role.module';
 
 @Module({
   imports: [
@@ -15,17 +19,16 @@ import { AuthModule } from './auth/auth.module';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'root',
+      password: '19990707@10AMiwasborn',
       database: 'online-shop',
-      entities: [
-        User,
-        BankAccount
-      ],
+      entities: [User, BankAccount, Role, UserRole],
       synchronize: true,
     }),
-   UserModule,
-   BankAccountModule,
-   AuthModule
+    UserModule,
+    BankAccountModule,
+    RoleModule,
+    UserRoleModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

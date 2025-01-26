@@ -1,0 +1,5 @@
+export enum ROLE {
+  MODERATOR = 'MODERATOR',
+  CLIENT = 'CLIENT',
+  SUPER_ADMIN = 'SUPER ADMIN',
+}

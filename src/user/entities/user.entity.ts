@@ -1,9 +1,9 @@
-import { BankAccount } from "src/bank-account/entities/bank-account.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BankAccount } from 'src/bank-account/entities/bank-account.entity';
+import { UserRole } from 'src/user-role/entities/user-role.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User {
-
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -13,18 +13,18 @@ export class User {
   @Column()
   lastName: string;
 
-
   @Column()
   email: string;
 
   @Column()
   password: string;
 
-
   @Column({ default: true })
   isActive: boolean;
 
-
   @OneToMany(() => BankAccount, (bankAccount) => bankAccount.user)
-  bankAccounts?: BankAccount[]
+  bankAccounts?: BankAccount[];
+
+  @OneToMany(() => UserRole, (userRole) => userRole.user)
+  userRoles: UserRole[];
 }

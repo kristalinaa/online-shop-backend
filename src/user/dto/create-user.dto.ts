@@ -1,6 +1,8 @@
-export interface CreateUserDto {
+import { ROLE } from 'src/role/role.enum';
 
-    firstName: string;
-    email:string;
-    password: string;
+export interface CreateUserDto {
+  firstName: string;
+  email: string;
+  password: string;
+  type: string;
 }
