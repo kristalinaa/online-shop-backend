@@ -54,6 +54,11 @@ export class UserService {
       where: {
         email: email,
       },
+      relations: {
+        userRoles: {
+          role: true
+        }
+      }
     });
   }
 

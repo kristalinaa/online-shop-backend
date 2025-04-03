@@ -11,6 +11,12 @@ import { Role } from './role/entities/role.entity';
 import { UserRole } from './user-role/entities/user-role.entity';
 import { RoleModule } from './role/role.module';
 import { UserRoleModule } from './user-role/user-role.module';
+import { ProductModule } from './product/product.module';
+import { Product } from './product/entities/product.entity';
+import { AttachmentModule } from './attachment/attachment.module';
+import { Attachment } from './attachment/entities/attachment.entity';
+import { CategoryModule } from './category/category.module';
+import { Category } from './category/entities/category.entity';
 
 @Module({
   imports: [
@@ -19,9 +25,9 @@ import { UserRoleModule } from './user-role/user-role.module';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: '19990707@10AMiwasborn',
+      password: 'root',
       database: 'online-shop',
-      entities: [User, BankAccount, Role, UserRole],
+      entities: [User, BankAccount, Role, UserRole, Product, Attachment,Category],
       synchronize: true,
     }),
     UserModule,
@@ -29,6 +35,9 @@ import { UserRoleModule } from './user-role/user-role.module';
     RoleModule,
     UserRoleModule,
     AuthModule,
+    ProductModule,
+    AttachmentModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
