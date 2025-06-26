@@ -17,6 +17,13 @@ import { AttachmentModule } from './attachment/attachment.module';
 import { Attachment } from './attachment/entities/attachment.entity';
 import { CategoryModule } from './category/category.module';
 import { Category } from './category/entities/category.entity';
+import { BagModule } from './bag/bag.module';
+import { Bag } from './bag/entities/bag.entity';
+import { CheckoutModule } from './checkout/checkout.module';
+import { Checkout } from './checkout/entities/checkout.entity';
+import { SoldModule } from './sold/sold.module';
+import { Sold } from './sold/entities/sold.entity';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -27,7 +34,7 @@ import { Category } from './category/entities/category.entity';
       username: 'root',
       password: 'root',
       database: 'online-shop',
-      entities: [User, BankAccount, Role, UserRole, Product, Attachment,Category],
+      entities: [User, BankAccount, Role, UserRole, Product, Attachment,Category, Bag,Checkout,Sold],
       synchronize: true,
     }),
     UserModule,
@@ -38,6 +45,10 @@ import { Category } from './category/entities/category.entity';
     ProductModule,
     AttachmentModule,
     CategoryModule,
+    BagModule,
+    CheckoutModule,
+    SoldModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

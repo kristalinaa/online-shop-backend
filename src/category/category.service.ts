@@ -66,6 +66,18 @@ export class CategoryService {
     })
   }
 
+  async countAllCategories(): Promise<number> {
+    return await this.categoryRepository.count();
+  }
+
+  async findOneByName(category: string) {
+    return await this.categoryRepository.findOne({
+      where: {
+        name: category
+      }
+    })
+  }
+
 
   async findAncestors(id: number) {
     const category = await this.categoryRepository.findOne({

@@ -35,9 +35,50 @@ export class UserService {
   }
 
   findAll() {
-    return this.usersRepository.find();
+    return this.usersRepository.find({
+      relations: {
+        userRoles: {
+          role: true
+        }
+      }
+    });
   }
 
+
+  
+  findAllCompanies() {
+    return this.usersRepository.find({
+      where: {
+        userRoles: {
+          role: {
+            role: 'company'
+          }
+        }
+      },
+      relations: {
+        userRoles: {
+          role: true
+        }
+      }
+    });
+  }
+
+  findAllClients() {
+    return this.usersRepository.find({
+      where: {
+        userRoles: {
+          role: {
+            role: 'person'
+          }
+        }
+      },
+      relations: {
+        userRoles: {
+          role: true
+        }
+      }
+    });
+  }
   findOne(id: number) {
     return this.usersRepository.findOne({
       where: {

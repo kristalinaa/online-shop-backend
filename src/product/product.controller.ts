@@ -34,6 +34,18 @@ export class ProductController {
     return this.productService.findAllPerCompany(user.userId);
   }
 
+
+  @UseGuards(JwtAuthGuard)
+  @Get('list-per-category')
+  findProductsPerCategory(
+    @Req() req: IGetUserAuthInfoRequest 
+  ) {
+    let user = req.user as any;
+    const queryParams = req.query;
+    
+    return this.productService.findProductsPerCategoryFilter(queryParams);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productService.findOne(+id);
@@ -48,4 +60,10 @@ export class ProductController {
   remove(@Param('id') id: string) {
     return this.productService.remove(+id);
   }
+
+  @Get('category/:category')
+  findProductsByCategory(@Param('category') category: string) {
+    return this.productService.findProductsPerCategory(category);
+  }
+
 }

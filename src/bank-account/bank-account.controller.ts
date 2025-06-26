@@ -1,30 +1,59 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards } from '@nestjs/common';
 import { BankAccountService } from './bank-account.service';
-import { CreateBankAccountDto } from './dto/create-bank-account.dto';
 import { UpdateBankAccountDto } from './dto/update-bank-account.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { IGetUserAuthInfoRequest } from 'src/common/interceptor/test';
 
 @Controller('bank-account')
 export class BankAccountController {
   constructor(private readonly bankAccountService: BankAccountService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createBankAccountDto: CreateBankAccountDto) {
-    return this.bankAccountService.create(createBankAccountDto);
+  create(@Body() createBankAccountDto: any,@Req() req: IGetUserAuthInfoRequest) {
+    let user = req.user as any;
+
+    return this.bankAccountService.create(createBankAccountDto,user.userId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
-    return this.bankAccountService.findAll();
+  findAllPerUser(@Req() req: IGetUserAuthInfoRequest) {
+    let user = req.user as any;
+
+    return this.bankAccountService.findAll(user.userId);
+  }
+
+
+  @UseGuards(JwtAuthGuard)
+  @Get('single/:id')
+  getSingleCard(@Req() req: IGetUserAuthInfoRequest,@Param('id') id: number) {
+    let user = req.user as any;
+
+    return this.bankAccountService.findOne(id, user.userId);
+  }
+
+
+  @UseGuards(JwtAuthGuard)
+  @Get('single/timeline/:id')
+  getSingleTimelineCard(@Req() req: IGetUserAuthInfoRequest,@Param('id') id: number) {
+    let user = req.user as any;
+
+    return this.bankAccountService.getHistoryPerCard(id, user.userId);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.bankAccountService.findOne(+id);
+    // return this.bankAccountService.findOne(+id);
   }
 
+  @UseGuards(JwtAuthGuard)
+
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBankAccountDto: UpdateBankAccountDto) {
-    return this.bankAccountService.update(+id, updateBankAccountDto);
+  update(@Req() req: IGetUserAuthInfoRequest,@Param('id') id: string, @Body() updateBankAccountDto: any) {
+    let user = req.user as any;
+
+    return this.bankAccountService.update(+id, updateBankAccountDto,user.userId);
   }
 
   @Delete(':id')

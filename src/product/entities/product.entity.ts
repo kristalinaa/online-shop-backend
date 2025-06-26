@@ -1,7 +1,8 @@
 import { Attachment } from "src/attachment/entities/attachment.entity";
+import { Bag } from "src/bag/entities/bag.entity";
 import { Category } from "src/category/entities/category.entity";
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Product {
@@ -74,7 +75,8 @@ export class Product {
     })
     review: number;
 
-    
+    @CreateDateColumn()
+    createdAt: Date;
 
     @ManyToOne(() => User, (user) => user.bankAccounts)
     user: User
@@ -85,5 +87,9 @@ export class Product {
     // ✅ One product can have many attachments
     @OneToMany(() => Attachment, (attachment) => attachment.product, { cascade: true })
     attachments: Attachment[];
+
+
+    @OneToMany(() => Bag, bag => bag.product)
+bag: Bag[];
     
 }

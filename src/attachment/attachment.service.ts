@@ -16,7 +16,7 @@ export class AttachmentService {
   }
 
 
-  private readonly fileStoragePath = join(__dirname, '../../src/files'); // Save inside src/files
+  private readonly fileStoragePath = join(__dirname, '../../files'); // Save inside src/files
 
   async saveFilesToLocalPath(files: Array<Express.Multer.File>) {
     const savedFiles: Attachment[] = []

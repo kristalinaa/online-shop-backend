@@ -82,7 +82,7 @@ export class AuthService {
         throw new BadRequestException('Wrong credentials');
       }
 
-      const payload = { sub: user.id, email: user.email };
+      const payload = { sub: user.id, email: user.email, roles: user.userRoles.map(it=> it.role.role) };
       const access_token = await this.jwtService.signAsync(payload);
 
       console.log('aceess toke ', user.userRoles);
