@@ -1,6 +1,6 @@
 import { BadGatewayException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserActiveDto } from './dto/update-user.dto';
+import { UpdateGeneralUserDto, UpdateUserActiveDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -10,7 +10,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-  ) {}
+  ) { }
 
   async registerUser(createUserDto: CreateUserDto): Promise<any> {
     let response: any;
@@ -45,7 +45,7 @@ export class UserService {
   }
 
 
-  
+
   findAllCompanies() {
     return this.usersRepository.find({
       where: {
@@ -107,7 +107,34 @@ export class UserService {
     return this.usersRepository.update(id, updateUserDto);
   }
 
+
+  async updateUserGeneralData(id: number, updateUserDto: UpdateGeneralUserDto) {
+    try {
+      let user = await this.usersRepository.findOne({
+        where: { id: id },
+      });
+      if (!user) {
+        throw new BadGatewayException('User not found');
+      }
+      user = {
+        ...user,
+        status: updateUserDto.status
+      }
+
+      return this.usersRepository.update(id, user);
+    } catch (error) {
+      console.error('Error updating user general data:', error);
+      throw new BadGatewayException('Internal server error');
+    }
+  }
+
+
   remove(id: number) {
-    return this.usersRepository.delete(id);
+    try {
+      return this.usersRepository.delete(id);
+      
+    } catch (error) {
+      throw new BadGatewayException('Internal server error');
+    }
   }
 }

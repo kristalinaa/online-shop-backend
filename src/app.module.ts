@@ -24,6 +24,8 @@ import { Checkout } from './checkout/entities/checkout.entity';
 import { SoldModule } from './sold/sold.module';
 import { Sold } from './sold/entities/sold.entity';
 import { AdminModule } from './admin/admin.module';
+import { NotificationModule } from './notification/notification.module';
+import { Notification } from './notification/entities/notification.entity';
 
 @Module({
   imports: [
@@ -32,9 +34,9 @@ import { AdminModule } from './admin/admin.module';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'root',
+      password: '19990707@10AMiwasborn',
       database: 'online-shop',
-      entities: [User, BankAccount, Role, UserRole, Product, Attachment,Category, Bag,Checkout,Sold],
+      entities: [User, BankAccount, Role, UserRole, Product, Attachment,Category, Bag,Checkout,Sold,Notification],
       synchronize: true,
     }),
     UserModule,
@@ -49,6 +51,7 @@ import { AdminModule } from './admin/admin.module';
     CheckoutModule,
     SoldModule,
     AdminModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

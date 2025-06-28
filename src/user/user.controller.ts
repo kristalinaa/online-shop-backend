@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserActiveDto } from './dto/update-user.dto';
+import { UpdateGeneralUserDto, UpdateUserActiveDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -26,6 +26,18 @@ export class UserController {
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserActiveDto) {
     return this.userService.update(+id, updateUserDto);
   }
+
+
+
+  @Patch('update-active/:id')
+  updateActive(@Param('id') id: string, @Body() updateUserDto: UpdateGeneralUserDto) {
+    console.log('Updating user active status:', id, updateUserDto);
+    return this.userService.updateUserGeneralData(+id, updateUserDto);
+  }
+
+
+
+
 
   @Delete(':id')
   remove(@Param('id') id: string) {

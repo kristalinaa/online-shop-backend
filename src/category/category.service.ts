@@ -89,8 +89,8 @@ export class CategoryService {
 
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(id: number, updateCategoryDto: any) {
+    return await this.categoryRepository.update(id, updateCategoryDto);
   }
 
   remove(id: number) {

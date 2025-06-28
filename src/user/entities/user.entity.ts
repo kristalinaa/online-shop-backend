@@ -1,6 +1,7 @@
 import { Bag } from 'src/bag/entities/bag.entity';
 import { BankAccount } from 'src/bank-account/entities/bank-account.entity';
 import { Checkout } from 'src/checkout/entities/checkout.entity';
+import { Notification } from 'src/notification/entities/notification.entity';
 import { Product } from 'src/product/entities/product.entity';
 import { UserStatus } from 'src/role/role.enum';
 import { UserRole } from 'src/user-role/entities/user-role.entity';
@@ -50,4 +51,12 @@ export class User {
 
   @OneToMany(() => Bag, bag => bag.user)
   bag: Bag[];
+
+   /** Notifications I have received */
+  @OneToMany(() => Notification, n => n.recipient)
+  notificationsReceived: Notification[];
+
+  /** Notifications I have sent (as the actor) */
+  @OneToMany(() => Notification, n => n.sender)
+  notificationsSent: Notification[];
 }
