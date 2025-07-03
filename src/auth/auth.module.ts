@@ -8,6 +8,8 @@ import { PassportModule } from '@nestjs/passport';
 import { UserRoleModule } from 'src/user-role/user-role.module';
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
+import { JwtWsGuard } from './jwt-ws.guard';
+import { SocketAuthMiddleware } from './socket-middleware';
 @Module({
   imports: [
     UserModule,
@@ -18,7 +20,8 @@ import { JwtStrategy } from './jwt.strategy';
       signOptions: { expiresIn: '60d' },
     }),
   ],
+  exports: [SocketAuthMiddleware],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy,SocketAuthMiddleware],
 })
 export class AuthModule {}

@@ -63,7 +63,6 @@ export class AuthService {
       //check if register, email exist
       const user = await this.userService.findOneByEmail(loginUserDto.email);
 
-      console.log("--- user ", user)
       if (!user) {
         throw new BadRequestException(
           'We cant find this user, please register',
@@ -84,8 +83,6 @@ export class AuthService {
 
       const payload = { sub: user.id, email: user.email, roles: user.userRoles.map(it=> it.role.role) };
       const access_token = await this.jwtService.signAsync(payload);
-
-      console.log('aceess toke ', user.userRoles);
 
       const userRoles = user.userRoles.map( (it: any) => it.role.role)
       response = {

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { Category } from 'src/category/entities/category.entity';
@@ -10,67 +10,48 @@ export class ProductRepository extends Repository<Product> {
   }
 
   async getProductsPerCategory(categoryName: string) {
-    // Step 1: Find category ID by name
-    const category = await this.manager
-      .getRepository(Category)
-      .findOne({ where: { name: categoryName } });
+    const categoryRepo = this.manager.getTreeRepository(Category);
 
-    if (!category) {
-      throw new Error(`Category with name '${categoryName}' not found`);
+    // 1. Merr kategorinë bazë
+    const root = await categoryRepo.findOne({ where: { name: categoryName } });
+    if (!root) {
+      throw new NotFoundException(`Kategoria '${categoryName}' nuk u gjet`);
     }
 
-    // Step 2: Get products linked to this category or its descendants
-    const queryBuilder = this.createQueryBuilder('product')
+    // 2. Gjej *të gjithë* pasardhësit (përfshirë vetë root-in)
+    const descendants = await categoryRepo.findDescendants(root);
+    const ids = descendants.map(c => c.id);
+
+    // 3. Kërko produktet që i përkasin kujtdo prej këtyre ID-ve
+    return this.createQueryBuilder('product')
       .innerJoinAndSelect('product.category', 'category')
       .innerJoinAndSelect('product.attachments', 'attachments')
-      .where((qb) => {
-        const subQuery = qb
-          .subQuery()
-          .select('c.id')
-          .from('category', 'c')
-          .where(
-            'c.id = :categoryId OR c.parentId IN (SELECT id FROM category WHERE parentId = :categoryId)',
-          )
-          .setParameter('categoryId', category.id)
-          .getQuery();
-
-        return `category.id IN (${subQuery})`;
-      })
-      .limit(5);
-
-    return queryBuilder;
+      .where('category.id IN (:...ids)', { ids })
+      .limit(20)                  // nëse të duhet limit
+      .getMany();                // kthe listën, jo vetëm QueryBuilder
   }
 
 
-  async getProductsListPerCategory(categoryName: string) {
-    // Step 1: Find category ID by name
-    const category = await this.manager
-      .getRepository(Category)
-      .findOne({ where: { name: categoryName } });
+  async getProductsListPerCategory(categoryName: string, limit: number = 5) {
+    const categoryRepo = this.manager.getTreeRepository(Category);
 
-    if (!category) {
-      throw new Error(`Category with name '${categoryName}' not found`);
+    // 1. Merr kategorinë bazë
+    const root = await categoryRepo.findOne({ where: { name: categoryName } });
+    if (!root) {
+      throw new NotFoundException(`Kategoria '${categoryName}' nuk u gjet`);
     }
 
-    // Step 2: Get products linked to this category or its descendants
-    const queryBuilder = this.createQueryBuilder('product')
+    // 2. Gjej *të gjithë* pasardhësit (përfshirë vetë root-in)
+    const descendants = await categoryRepo.findDescendants(root);
+    const ids = descendants.map(c => c.id);
+
+    // 3. Kërko produktet që i përkasin kujtdo prej këtyre ID-ve
+    return this.createQueryBuilder('product')
       .innerJoinAndSelect('product.category', 'category')
       .innerJoinAndSelect('product.attachments', 'attachments')
-      .where((qb) => {
-        const subQuery = qb
-          .subQuery()
-          .select('c.id')
-          .from('category', 'c')
-          .where(
-            'c.id = :categoryId OR c.parentId IN (SELECT id FROM category WHERE parentId = :categoryId)',
-          )
-          .setParameter('categoryId', category.id)
-          .getQuery();
+      .where('category.id IN (:...ids)', { ids })
 
-        return `category.id IN (${subQuery})`;
-      })
-      .limit(5);
-
-    return queryBuilder;
+      // .limit(limit)                  // nëse të duhet limit
+      .getMany();                // kthe listën, jo vetëm QueryBuilder
   }
 }

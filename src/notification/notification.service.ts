@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/user/entities/user.entity";
 import { Repository } from "typeorm";
 import { Notification } from "./entities/notification.entity";
+import { NotificationsGateway } from "./websocket/websocket-gateway";
 
-// src/notifications/notifications.service.ts
 @Injectable()
 export class NotificationsService {
   constructor(
@@ -12,6 +12,9 @@ export class NotificationsService {
     private readonly repo: Repository<Notification>,
     @InjectRepository(User)
     private readonly users: Repository<User>,
+    @Inject(forwardRef(() => NotificationsGateway))
+    private readonly gateway: NotificationsGateway,
+
   ) {}
 
   async create(dto: any): Promise<Notification> {
@@ -31,13 +34,40 @@ export class NotificationsService {
   }
 
   async markAsRead(id: number): Promise<void> {
-    await this.repo.update(id, { isRead: true });
+    const notificationsPerUser = await this.findForUser(id)
+    notificationsPerUser.forEach(async (notification) => {
+      if (!notification.isRead) {
+        notification.isRead = true;
+        await this.repo.update(notification.id, { isRead: true });
+
+      }})
   }
 
-  findForUser(userId: number) {
+  async findForUser(userId: number) {
     return this.repo.find({
       where: { recipient: { id: userId } },
+      relations: ['sender', 'recipient'],
       order: { createdAt: 'DESC' },
     });
+  }
+
+
+   async createAndDispatch(
+    recipient: User,
+    message: string,
+    sender?: User | null,
+  ) {
+
+    console.log("Creating notification for recipient:", recipient, "with message:", message);
+    console.log("Creating notification for sender:", sender, "with message:", message);
+
+    const entity = this.repo.create({ recipient, message, sender: sender ?? null });
+    const saved = await this.repo.save(entity);
+    this.gateway.emitToUser(recipient.id, saved);
+    return saved;
+  }
+
+  findUnread(recipientId: number) {
+    return this.repo.find({ where: { recipient: { id: recipientId }, isRead: false } });
   }
 }

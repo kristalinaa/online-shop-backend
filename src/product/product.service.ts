@@ -120,15 +120,17 @@ export class ProductService {
   async findProductsPerCategory(category: string) {
     const products = (
       await this.productRepository.getProductsPerCategory(category)
-    ).getMany();
+    );
     return products;
   }
   async findProductsPerCategoryFilter(filter: any) {
     if (filter) {
       const category = filter['category'];
+      const limit = filter['limit'] ? Number(filter['limit']) : 5;
+      console.log('limit ', limit);
       const products = (
-        await this.productRepository.getProductsListPerCategory(category)
-      ).getMany();
+        await this.productRepository.getProductsListPerCategory(category,limit)
+      );
       return products;
     }
     return [];

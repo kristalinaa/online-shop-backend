@@ -11,6 +11,8 @@ import { BankAccount } from 'src/bank-account/entities/bank-account.entity';
 import { Sold } from 'src/sold/entities/sold.entity';
 import { Checkout } from './entities/checkout.entity';
 import { DataSource } from 'typeorm';
+import { NotificationsGateway } from 'src/notification/websocket/websocket-gateway';
+import { NotificationsService } from 'src/notification/notification.service';
 
 @Injectable()
 export class CheckoutService {
@@ -21,7 +23,8 @@ export class CheckoutService {
     private userService: UserService,
     private bankAccountRepository: BankAccountRepository,
     private productService: ProductService,
-    private soldService: SoldService
+    private soldService: SoldService,
+    private notificationsService: NotificationsService
   ){
 
   }
@@ -60,6 +63,7 @@ export class CheckoutService {
   
       for (const element of soldItems) {
         const product = await this.productService.findOne(element.product.id);
+        // console.log("Product found:", product);
         if (!product) throw new HttpException("Product not found", HttpStatus.NOT_FOUND);
   
         const sold = queryRunner.manager.create(Sold, {
@@ -77,10 +81,14 @@ export class CheckoutService {
       card.total = newTotal.toString();
   
       await queryRunner.manager.save(BankAccount, card);
-  
+      console.log("✅ Card balance updated:", card.total);
+      const recipient = await this.userService.findOne(createCheckoutDto.metadata.recipientId);
+      const sender = await this.userService.findOne(userId);
+      await this.notificationsService.createAndDispatch(recipient, 'A new checkout was done to your product!', sender);
+
       // ✅ Commit transaction
       await queryRunner.commitTransaction();
-  
+      
       return createdCheckout;
   
     } catch (error) {
