@@ -6,33 +6,35 @@ import {
   ManyToOne,
   CreateDateColumn,
   Index,
+  PrimaryColumn,
 } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
+import { Conversation } from 'src/conversation/entities/conversation.entity';
 
 @Entity('chat_messages')
 export class ChatMessage {
   @PrimaryGeneratedColumn()
   id: number;
 
-  /** Përmbajtja tekstuale e mesazhit */
-  @Column({ type: 'varchar', length: 1000 })
-  message: string;
+  @ManyToOne(() => Conversation, c => c.messages)
+  conversation: Conversation;
 
-  /** Përdoruesi që e ka dërguar mesazhin */
-  @ManyToOne(() => User, (user) => user.messagesSent, { eager: true })
-  @Index()
+/** përdoruesi që dërgon */
+  @ManyToOne(() => User, u => u.messagesSent, { eager: true })
   sender: User;
 
-  /** Përdoruesi që e merr mesazhin */
-  @ManyToOne(() => User, (user) => user.messagesReceived, { eager: true })
-  @Index()
+  /** përdoruesi që merr */
+  @ManyToOne(() => User, u => u.messagesReceived, { eager: true })
   recipient: User;
 
-  /** Flag që tregon nëse marrësi e ka lexuar mesazhin */
+  /** teksti i mesazhit */
+  @Column({ type: 'text' })
+  body: string;
+
+  /** lexuar / jo-lexuar nga marrësi */
   @Column({ default: false })
   isRead: boolean;
 
-  /** Data dhe ora kur mesazhi u krijua */
   @CreateDateColumn()
   createdAt: Date;
 }

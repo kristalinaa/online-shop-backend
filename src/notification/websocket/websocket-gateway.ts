@@ -30,7 +30,7 @@ export class NotificationsGateway
 
   async handleConnection(client: Socket) {
     const { user } = client.data;
-    console.log("user: ", user)       
+    console.log("user notification: ", user)       
     client.join(user.sub.toString());         
     const unread = await this.notificationsSvc.findUnread(user.sub);
     if (unread.length) client.emit('notification:list', unread);

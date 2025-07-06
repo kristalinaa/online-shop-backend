@@ -32,6 +32,7 @@ export class ProductRepository extends Repository<Product> {
   }
 
 
+
   async getProductsListPerCategory(categoryName: string, limit: number = 5) {
     const categoryRepo = this.manager.getTreeRepository(Category);
 

@@ -14,7 +14,7 @@ export class SocketAuthMiddleware {
     if (!token) return next(new Error('No token'));
     try {
       const decoded = this.jwt.verify(token); 
-      console.log("Decoded JWT payload:", decoded); 
+      console.log('Decoded JWT in WebSocket:', decoded);
       socket.data.user = decoded;              
       next();
     } catch (err) {

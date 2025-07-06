@@ -2,6 +2,7 @@ import { Bag } from 'src/bag/entities/bag.entity';
 import { BankAccount } from 'src/bank-account/entities/bank-account.entity';
 import { ChatMessage } from 'src/chat-message/entities/chat-message.entity';
 import { Checkout } from 'src/checkout/entities/checkout.entity';
+import { Conversation } from 'src/conversation/entities/conversation.entity';
 import { Notification } from 'src/notification/entities/notification.entity';
 import { Product } from 'src/product/entities/product.entity';
 import { UserStatus } from 'src/role/role.enum';
@@ -62,9 +63,19 @@ export class User {
   notificationsSent: Notification[];
 
 
-  @OneToMany(() => ChatMessage, (m) => m.sender)
+    /** Mesazhet që KAM DËRGUAR unë  */
+  @OneToMany(() => ChatMessage, m => m.sender)
   messagesSent: ChatMessage[];
 
-  @OneToMany(() => ChatMessage, (m) => m.recipient)
+  /** Mesazhet që KAM MARË unë    */
+  @OneToMany(() => ChatMessage, m => m.recipient)
   messagesReceived: ChatMessage[];
+
+  /** Bisedat ku jam participant A */
+  @OneToMany(() => Conversation, c => c.participantA)
+  conversationsAsA: Conversation[];
+
+  /** Bisedat ku jam participant B */
+  @OneToMany(() => Conversation, c => c.participantB)
+  conversationsAsB: Conversation[]
 }

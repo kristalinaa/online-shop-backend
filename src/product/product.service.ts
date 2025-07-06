@@ -103,10 +103,22 @@ export class ProductService {
 
   async findOne(id: number) {
     return await this.productRepository.findOne({
+      select: {
+        
+        attachments: true,
+        category: true,
+        user: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+        }
+      },
       where: { id: id },
       relations: {
         attachments: true,
         category: true,
+        user: true,
       },
     });
   }

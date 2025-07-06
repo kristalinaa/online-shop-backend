@@ -26,8 +26,10 @@ import { Sold } from './sold/entities/sold.entity';
 import { AdminModule } from './admin/admin.module';
 import { NotificationModule } from './notification/notification.module';
 import { Notification } from './notification/entities/notification.entity';
-import { ChatMessageModule } from './chat-message/chat-message.module';
 import { ChatMessage } from './chat-message/entities/chat-message.entity';
+import { ConversationModule } from './conversation/conversation.module';
+import { Conversation } from './conversation/entities/conversation.entity';
+import { ChatModule } from './chat-message/chat-message.module';
 
 @Module({
   imports: [
@@ -38,7 +40,7 @@ import { ChatMessage } from './chat-message/entities/chat-message.entity';
       username: 'root',
       password: '19990707@10AMiwasborn',
       database: 'online-shop',
-      entities: [User, BankAccount, Role, UserRole, Product, Attachment,Category, Bag,Checkout,Sold,Notification, ChatMessage],
+      entities: [User, BankAccount, Role, UserRole, Product, Attachment,Category, Bag,Checkout,Sold,Notification, ChatMessage, Conversation],
       synchronize: true,
     }),
     UserModule,
@@ -54,7 +56,8 @@ import { ChatMessage } from './chat-message/entities/chat-message.entity';
     SoldModule,
     AdminModule,
     NotificationModule,
-    ChatMessageModule,
+    ChatModule,
+    ConversationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
